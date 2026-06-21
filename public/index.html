@@ -20,14 +20,6 @@
         <!-- Sticky Header -->
         <header class="app-header">
             <a href="#/" class="brand-logo">Scholar<span>Mart</span></a>
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <button id="header-auth-btn" class="user-status-btn" title="Dashboard">
-                    <!-- User Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 22px; height: 22px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                    </svg>
-                </button>
-            </div>
         </header>
 
         <!-- Main Scrollable Content -->
@@ -319,7 +311,7 @@
                     <button class="btn btn-secondary btn-sm" onclick="logoutUser()" style="width: auto;">Logout</button>
                 </div>
                 <div class="card" style="background-color: #ECFDF5; border-color: #D1FAE5; display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-                    <div class="vendor-avatar" id="buyer-profile-avatar">SB</div>
+                    <div class="vendor-avatar" id="buyer-profile-avatar" style="cursor: pointer;" title="Click to upload portrait">SB</div>
                     <div>
                         <div style="font-weight: 700;" id="buyer-profile-name">Student Buyer</div>
                         <div style="font-size: 12px; color: var(--text-secondary);" id="buyer-profile-campus">COOU - Igbariam</div>
@@ -327,6 +319,8 @@
                         <div id="buyer-verification-badge" style="margin-top: 4px;"></div>
                     </div>
                 </div>
+                <!-- Hidden file input for buyer portrait -->
+                <input type="file" id="buyer-portrait-input" accept="image/*" style="display: none;">
 
                 <!-- Verification Wizard Section -->
                 <div id="verification-wizard-card" class="card" style="display: none;">
@@ -371,7 +365,7 @@
                     <button class="btn btn-secondary btn-sm" onclick="logoutUser()" style="width: auto;">Logout</button>
                 </div>
                 <div class="card" style="background-color: #ECFDF5; border-color: #D1FAE5; display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-                    <div class="vendor-avatar" id="vendor-profile-avatar">SV</div>
+                    <div class="vendor-avatar" id="vendor-profile-avatar" style="cursor: pointer;" title="Click to upload portrait">SV</div>
                     <div>
                         <div style="font-weight: 700; display: flex; align-items: center; gap: 4px;" id="vendor-profile-name">
                             <span>Student Vendor</span>

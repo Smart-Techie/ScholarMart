@@ -220,6 +220,12 @@ async function loadVendorDashboard() {
         subaccountLabel.textContent = currentUser.paystack_subaccount_code || 'Account Unlinked (Mock fallback active)';
     }
 
+    // Hide/show portrait upload card depending on whether they have a portrait already
+    const portraitCard = document.getElementById('vendor-portrait-card');
+    if (portraitCard) {
+        portraitCard.style.display = currentUser.portrait ? 'none' : 'block';
+    }
+
     // Vendor verification wizard
     loadVendorVerificationWizard();
 
@@ -587,6 +593,35 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
     }
+
+    // Avatar portrait upload clicks and auto-uploads
+    const vendorAvatar = document.getElementById('vendor-profile-avatar');
+    if (vendorAvatar) {
+        vendorAvatar.onclick = () => {
+            document.getElementById('vendor-portrait-input')?.click();
+        };
+    }
+
+    const buyerAvatar = document.getElementById('buyer-profile-avatar');
+    if (buyerAvatar) {
+        buyerAvatar.onclick = () => {
+            document.getElementById('buyer-portrait-input')?.click();
+        };
+    }
+
+    const vendorPortraitInput = document.getElementById('vendor-portrait-input');
+    if (vendorPortraitInput) {
+        vendorPortraitInput.onchange = () => {
+            uploadPortraitFile('vendor-portrait-input');
+        };
+    }
+
+    const buyerPortraitInput = document.getElementById('buyer-portrait-input');
+    if (buyerPortraitInput) {
+        buyerPortraitInput.onchange = () => {
+            uploadPortraitFile('buyer-portrait-input');
+        };
+    }
 });
 
 
@@ -877,11 +912,11 @@ async function resetUserPassword(userId) {
     }
 }
 
-// Upload vendor profile portrait
-async function uploadVendorPortrait() {
+// Generic upload portrait function
+async function uploadPortraitFile(fileInputId) {
     if (!currentToken) return;
 
-    const fileInput = document.getElementById('vendor-portrait-input');
+    const fileInput = document.getElementById(fileInputId);
     const file = fileInput?.files[0];
 
     if (!file) {
@@ -907,8 +942,12 @@ async function uploadVendorPortrait() {
             
             Toast.update(loader, 'Portrait uploaded successfully!', 'success');
             
-            // Reload/refresh vendor dashboard avatar
-            loadVendorVerificationWizard();
+            // Refresh dashboards based on role
+            if (currentUser.role === 'vendor') {
+                loadVendorDashboard();
+            } else {
+                loadBuyerVerificationWizard();
+            }
             // Clear input
             fileInput.value = '';
         } else {
@@ -917,4 +956,9 @@ async function uploadVendorPortrait() {
     } catch (err) {
         Toast.update(loader, 'Server error during upload.', 'error');
     }
+}
+
+// Upload vendor profile portrait
+async function uploadVendorPortrait() {
+    await uploadPortraitFile('vendor-portrait-input');
 }

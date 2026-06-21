@@ -5,6 +5,7 @@
 // Sync auth settings with other modules
 function syncAuthUI() {
     const authBtn = document.getElementById('header-auth-btn');
+    if (!authBtn) return;
     if (currentToken && currentUser) {
         authBtn.onclick = () => { window.location.hash = '#/dashboard'; };
         authBtn.title = `${currentUser.name} (${currentUser.role})`;
