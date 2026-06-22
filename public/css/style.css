@@ -489,10 +489,12 @@ p.view-subtitle {
 /* CATEGORIES ROW */
 .categories-wrapper {
     display: flex;
+    flex-wrap: nowrap;
     gap: 12px;
     overflow-x: auto;
     padding: 4px 0 16px;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
 }
 
 .categories-wrapper::-webkit-scrollbar {
@@ -509,6 +511,7 @@ p.view-subtitle {
     font-weight: 600;
     white-space: nowrap;
     cursor: pointer;
+    font-family: inherit;
     transition: all 0.2s;
 }
 

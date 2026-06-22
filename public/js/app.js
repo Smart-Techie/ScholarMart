@@ -164,10 +164,10 @@ function buildCategoryChips() {
     const marketContainer = document.getElementById('marketplace-categories');
     
     const buildChipsHTML = (activeCat) => {
-        let html = `<div class="category-chip ${!activeCat ? 'active' : ''}" onclick="selectCategoryFilter('')">All</div>`;
+        let html = `<button type="button" class="category-chip ${!activeCat ? 'active' : ''}" onclick="selectCategoryFilter('')">All</button>`;
         html += BRAND_CATEGORIES.map(cat => {
             const isActive = cat === activeCat;
-            return `<div class="category-chip ${isActive ? 'active' : ''}" onclick="selectCategoryFilter('${cat}')">${cat}</div>`;
+            return `<button type="button" class="category-chip ${isActive ? 'active' : ''}" onclick="selectCategoryFilter('${cat}')">${cat}</button>`;
         }).join('');
         return html;
     };
