@@ -583,20 +583,47 @@ async function submitRateSeller(event) {
 }
 
 // 7. Share product details link via native Share API or copy to clipboard fallback
-function shareProductLink() {
+async function shareProductLink() {
     const shareUrl = window.location.href;
     const productName = document.getElementById('details-name').textContent || 'Product';
     
+    // Attempt to get the first product image
+    const firstImg = document.querySelector('#details-gallery .gallery-img');
+    const imageUrl = firstImg ? firstImg.src : null;
+    
     if (navigator.share) {
-        navigator.share({
+        const shareData = {
             title: productName + ' - ScholarMart',
             text: `Check out this listing on ScholarMart: ${productName}`,
             url: shareUrl
-        }).then(() => {
-            Toast.show('Shared successfully!', 'success');
+        };
+        
+        // If image exists and is not a placeholder, try to fetch it as a File object
+        if (imageUrl && !imageUrl.includes('placeholder.webp')) {
+            try {
+                const response = await fetch(imageUrl);
+                const blob = await response.blob();
+                const mimeType = blob.type || 'image/jpeg';
+                const ext = mimeType.split('/').pop() || 'jpg';
+                const file = new File([blob], `product.${ext}`, { type: mimeType });
+                
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    shareData.files = [file];
+                }
+            } catch (err) {
+                console.error('Error preparing image file for share:', err);
+            }
+        }
+        
+        const loader = Toast.show('Preparing sharing view...', 'loading');
+        navigator.share(shareData).then(() => {
+            Toast.update(loader, 'Shared successfully!', 'success');
         }).catch((err) => {
             if (err.name !== 'AbortError') {
+                Toast.update(loader, 'Sharing failed. Copying link instead...', 'warning');
                 copyShareLinkToClipboard(shareUrl);
+            } else {
+                Toast.dismiss(loader);
             }
         });
     } else {
