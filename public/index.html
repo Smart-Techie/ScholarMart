@@ -74,10 +74,87 @@
 
 
                 <div class="section-header">
-                    <h3 class="section-title">Categories</h3>
+                    <h3 class="section-title">Popular Categories</h3>
                 </div>
-                <div class="categories-wrapper" id="landing-categories">
-                    <!-- Loaded dynamically -->
+                <div class="categories-grid">
+                    <div class="category-grid-item" onclick="selectCategoryFilter('Electronics')">
+                        <div class="category-icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 22px; height: 22px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
+                            </svg>
+                        </div>
+                        <span class="category-grid-label">Electronics</span>
+                    </div>
+                    <div class="category-grid-item" onclick="selectCategoryFilter('Fashion & Clothing')">
+                        <div class="category-icon-box" style="color: #ff6b00; background-color: rgba(255,107,0,0.08);">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 22px; height: 22px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 2L3 5v4h3v11h12V9h3V5l-3-3H6z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 2l3 3m6-3l-3 3" />
+                            </svg>
+                        </div>
+                        <span class="category-grid-label">Fashion</span>
+                    </div>
+                    <div class="category-grid-item" onclick="selectCategoryFilter('Books & Academic Materials')">
+                        <div class="category-icon-box" style="color: #10b981; background-color: rgba(16,185,129,0.08);">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 22px; height: 22px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                            </svg>
+                        </div>
+                        <span class="category-grid-label">Books</span>
+                    </div>
+                    <div class="category-grid-item" onclick="selectCategoryFilter('Hostel Essentials')">
+                        <div class="category-icon-box" style="color: #3b82f6; background-color: rgba(59,130,246,0.08);">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 22px; height: 22px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3.75-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.75A1.5 1.5 0 0110.5 15.75h3a1.5 1.5 0 011.5 1.5V21" />
+                            </svg>
+                        </div>
+                        <span class="category-grid-label">Hostels</span>
+                    </div>
+                    <div class="category-grid-item" onclick="selectCategoryFilter('Gadgets')">
+                        <div class="category-icon-box" style="color: #8b5cf6; background-color: rgba(139,92,246,0.08);">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 22px; height: 22px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.5 1.5H13.5M10.5 22.5H13.5M12 5.25a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM12 9v3l1.5 1.5" />
+                            </svg>
+                        </div>
+                        <span class="category-grid-label">Gadgets</span>
+                    </div>
+                    <div class="category-grid-item" onclick="selectCategoryFilter('Creative & Handmade')">
+                        <div class="category-icon-box" style="color: #ec4899; background-color: rgba(236,72,153,0.08);">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 22px; height: 22px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3a9 9 0 000 18h1.168a1.5 1.5 0 001.272-.705l.394-.63a1.5 1.5 0 011.272-.705h2.144A1.5 1.5 0 0019.5 18a9 9 0 00-7.5-15z" />
+                                <circle cx="7.5" cy="10.5" r="1" fill="currentColor" />
+                                <circle cx="11.5" cy="7.5" r="1" fill="currentColor" />
+                                <circle cx="15.5" cy="10.5" r="1" fill="currentColor" />
+                            </svg>
+                        </div>
+                        <span class="category-grid-label">Creative</span>
+                    </div>
+                    <div class="category-grid-item" onclick="selectCategoryFilter('Beauty & Personal Care')">
+                        <div class="category-icon-box" style="color: #f59e0b; background-color: rgba(245,158,11,0.08);">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 22px; height: 22px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3h6v3H9V3zm-2.25 6h10.5a1.5 1.5 0 011.5 1.5v9A2.25 2.25 0 0116.5 21.75H7.5A2.25 2.25 0 015.25 19.5v-9A1.5 1.5 0 016.75 9z" />
+                            </svg>
+                        </div>
+                        <span class="category-grid-label">Beauty</span>
+                    </div>
+                    <div class="category-grid-item" onclick="selectCategoryFilter('Sports & Fitness')">
+                        <div class="category-icon-box" style="color: #06b6d4; background-color: rgba(6,182,212,0.08);">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 22px; height: 22px;">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                <path d="M6 12A6 6 0 0 1 18 12" stroke="currentColor" stroke-width="2"/>
+                                <path d="M12 6A6 6 0 0 0 12 18" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <span class="category-grid-label">Sports</span>
+                    </div>
+                    <div class="category-grid-item" onclick="selectCategoryFilter('Others')">
+                        <div class="category-icon-box" style="color: #64748b; background-color: rgba(100,116,139,0.08);">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 22px; height: 22px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                            </svg>
+                        </div>
+                        <span class="category-grid-label">Others</span>
+                    </div>
                 </div>
 
                 <div class="section-header" style="margin-top: 8px;">

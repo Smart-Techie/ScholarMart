@@ -596,6 +596,58 @@ p.view-subtitle {
     border-radius: var(--radius-sm);
 }
 
+/* ─── Categories Grid (Landing Page Popular Categories) ─ */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px 8px;
+    margin-bottom: 24px;
+    padding: 8px 0;
+}
+
+.category-grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.category-grid-item:active {
+    transform: scale(0.92);
+}
+
+.category-icon-box {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background-color: rgba(0, 168, 107, 0.08); /* soft primary green fallback */
+    color: var(--primary-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.category-grid-item:hover .category-icon-box {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.category-grid-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 6px;
+    text-align: center;
+    max-width: 76px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* ─── Categories Row ─────────────────────────────── */
 .categories-wrapper {
     display: flex;
