@@ -10,7 +10,9 @@ exports.listProducts = async (req, res) => {
         // Fetch all active products
         // Note: Joining user to get vendor details
         const sql = `
-            SELECT p.*, u.name as vendor_name, u.role as vendor_role, u.portrait as vendor_portrait,
+            SELECT p.id, p.vendor_id, p.name, p.description, p.price, p.category, p.campus,
+                   p.university, p.image_url, p.status, p.created_at,
+                   u.name as vendor_name, u.role as vendor_role, u.portrait as vendor_portrait,
                    u.deals_completed as vendor_deals_completed, u.average_rating as vendor_average_rating,
                    u.email_verified as vendor_email_verified
             FROM products p
@@ -57,8 +59,11 @@ exports.listProducts = async (req, res) => {
             const dealsCompleted = parseInt(p.vendor_deals_completed, 10) || 0;
             const avgRating = parseFloat(p.vendor_average_rating) || 0;
             const badge = getBadgeInfo(dealsCompleted, avgRating);
+            // Normalize image_url into an images array for frontend compatibility
+            const images = p.image_url ? [p.image_url] : ['/uploads/products/placeholder.webp'];
             return {
                 ...p,
+                images,
                 vendor: {
                     name: p.vendor_name,
                     portrait: p.vendor_portrait || null,
@@ -66,7 +71,7 @@ exports.listProducts = async (req, res) => {
                     deals_completed: dealsCompleted,
                     average_rating: avgRating,
                     badge,
-                    responseTime: 'Typically replies in 2 hours' // Core requirement trust signal
+                    responseTime: 'Typically replies in 2 hours'
                 }
             };
         });
@@ -88,7 +93,9 @@ exports.getProductDetails = async (req, res) => {
         const productId = parseInt(req.params.id, 10);
         
         const sql = `
-            SELECT p.*, u.name as vendor_name, u.email as vendor_email, u.whatsapp_number as vendor_whatsapp, 
+            SELECT p.id, p.vendor_id, p.name, p.description, p.price, p.category, p.campus,
+                   p.university, p.image_url, p.status, p.created_at,
+                   u.name as vendor_name, u.email as vendor_email, u.whatsapp_number as vendor_whatsapp,
                    u.portrait as vendor_portrait, u.deals_completed as vendor_deals_completed,
                    u.average_rating as vendor_average_rating, u.email_verified as vendor_email_verified
             FROM products p
@@ -103,15 +110,8 @@ exports.getProductDetails = async (req, res) => {
 
         const product = result.rows[0];
 
-        // Format images JSON if needed (fallback store returns object, postgres returns string/json)
-        let images = product.images;
-        if (typeof images === 'string') {
-            try {
-                images = JSON.parse(images);
-            } catch (e) {
-                images = [images];
-            }
-        }
+        // Normalize image_url into an images array for frontend compatibility
+        const images = product.image_url ? [product.image_url] : ['/uploads/products/placeholder.webp'];
 
         // WhatsApp Direct Link generation
         const prefilledText = encodeURIComponent(`Hello, I am interested in your product: "${product.name}" from ScholarMart`);
@@ -180,19 +180,14 @@ exports.createProduct = async (req, res) => {
         const userCheck = await db.query('SELECT email_verified FROM users WHERE id = $1', [vendorId]);
         const emailVerified = userCheck.rows[0]?.email_verified || false;
 
-        // Process upload images
-        const imageUrls = [];
+        // Process upload: store first image as image_url
+        let imageUrl = '/uploads/products/placeholder.webp';
         if (req.files && req.files.length > 0) {
-            req.files.forEach(file => {
-                imageUrls.push(`/uploads/products/${file.filename}`);
-            });
-        } else {
-            // Use placeholder if no images uploaded
-            imageUrls.push('/uploads/products/placeholder.webp');
+            imageUrl = await processUploadedFile(req.files[0], 'products') || `/uploads/products/${req.files[0].filename}`;
         }
 
         const sql = `
-            INSERT INTO products (name, description, price, category, university, campus, vendor_id, images, status)
+            INSERT INTO products (name, description, price, category, university, campus, vendor_id, image_url, status)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *
         `;
 
@@ -204,7 +199,7 @@ exports.createProduct = async (req, res) => {
             university || 'COOU',
             campus,
             vendorId,
-            JSON.stringify(imageUrls),
+            imageUrl,
             'active'
         ]);
 
@@ -239,17 +234,13 @@ exports.updateProduct = async (req, res) => {
             return res.status(403).json({ status: 'error', message: 'Unauthorized: You do not own this listing' });
         }
 
-        // Process images if new uploads are provided
-        let imageUrls;
+        // Process new image if provided
+        let newImageUrl;
         if (req.files && req.files.length > 0) {
-            imageUrls = [];
-            req.files.forEach(file => {
-                imageUrls.push(`/uploads/products/${file.filename}`);
-            });
+            newImageUrl = await processUploadedFile(req.files[0], 'products') || `/uploads/products/${req.files[0].filename}`;
         }
 
         // Update fields
-        // Simple update implementation
         const currentCheck = await db.query('SELECT * FROM products WHERE id = $1', [productId]);
         const current = currentCheck.rows[0];
 
@@ -258,17 +249,17 @@ exports.updateProduct = async (req, res) => {
         const updatedPrice = price !== undefined ? parseFloat(price) : current.price;
         const updatedCategory = category || current.category;
         const updatedCampus = campus || current.campus;
-        const updatedImages = imageUrls ? JSON.stringify(imageUrls) : current.images;
+        const updatedImageUrl = newImageUrl || current.image_url;
 
         const updateSql = `
             UPDATE products 
-            SET name = $1, description = $2, price = $3, category = $4, campus = $5, images = $6
+            SET name = $1, description = $2, price = $3, category = $4, campus = $5, image_url = $6
             WHERE id = $7 RETURNING *
         `;
 
         const result = await db.query(updateSql, [
             updatedName, updatedDescription, updatedPrice, updatedCategory, updatedCampus,
-            typeof updatedImages === 'string' ? updatedImages : JSON.stringify(updatedImages),
+            updatedImageUrl,
             productId
         ]);
 
@@ -358,7 +349,9 @@ exports.getSavedProducts = async (req, res) => {
     try {
         const userId = req.user.id;
         const result = await db.query(
-            `SELECT p.*, u.name as vendor_name, u.email_verified as vendor_email_verified, u.portrait as vendor_portrait
+            `SELECT p.id, p.vendor_id, p.name, p.description, p.price, p.category, p.campus,
+                    p.image_url, p.status, p.created_at,
+                    u.name as vendor_name, u.email_verified as vendor_email_verified, u.portrait as vendor_portrait
              FROM cart_items sp
              JOIN products p ON sp.product_id = p.id
              JOIN users u ON p.vendor_id = u.id
@@ -370,6 +363,7 @@ exports.getSavedProducts = async (req, res) => {
             status: 'success',
             products: result.rows.map(p => ({
                 ...p,
+                images: p.image_url ? [p.image_url] : ['/uploads/products/placeholder.webp'],
                 vendor: {
                     name: p.vendor_name,
                     verified: p.vendor_email_verified || false,

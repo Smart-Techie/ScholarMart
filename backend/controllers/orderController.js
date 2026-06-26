@@ -159,7 +159,7 @@ exports.getBuyerDeals = async (req, res) => {
     try {
         const buyerId = req.user.id;
         const result = await db.query(
-            `SELECT d.*, p.name as product_name, p.images, u.name as vendor_name, u.whatsapp_number as vendor_whatsapp
+            `SELECT d.*, p.name as product_name, p.image_url, u.name as vendor_name, u.whatsapp_number as vendor_whatsapp, u.deals_completed as vendor_deals_completed, u.average_rating as vendor_average_rating
              FROM deals d
              JOIN products p ON d.product_id = p.id
              JOIN users u ON d.vendor_id = u.id
@@ -169,14 +169,11 @@ exports.getBuyerDeals = async (req, res) => {
         );
 
         const formattedDeals = result.rows.map(d => {
-            let images = d.images;
-            if (typeof images === 'string') {
-                try { images = JSON.parse(images); } catch (e) { images = []; }
-            }
+            const images = d.image_url ? [d.image_url] : ['/uploads/products/placeholder.webp'];
             const vendorBadge = getBadgeInfo(d.vendor_deals_completed || 0, parseFloat(d.vendor_average_rating) || 0);
             return {
                 ...d,
-                images: images || [],
+                images,
                 product_name: d.product_name,
                 vendor: {
                     name: d.vendor_name,
@@ -198,7 +195,7 @@ exports.getVendorDeals = async (req, res) => {
     try {
         const vendorId = req.user.id;
         const result = await db.query(
-            `SELECT d.*, p.name as product_name, p.images, u.name as buyer_name, u.whatsapp_number as buyer_whatsapp
+            `SELECT d.*, p.name as product_name, p.image_url, u.name as buyer_name, u.whatsapp_number as buyer_whatsapp
              FROM deals d
              JOIN products p ON d.product_id = p.id
              LEFT JOIN users u ON d.buyer_id = u.id
@@ -208,13 +205,10 @@ exports.getVendorDeals = async (req, res) => {
         );
 
         const formattedDeals = result.rows.map(d => {
-            let images = d.images;
-            if (typeof images === 'string') {
-                try { images = JSON.parse(images); } catch (e) { images = []; }
-            }
+            const images = d.image_url ? [d.image_url] : ['/uploads/products/placeholder.webp'];
             return {
                 ...d,
-                images: images || [],
+                images,
                 product_name: d.product_name,
                 buyer: {
                     name: d.buyer_name || 'Walk-in Buyer',

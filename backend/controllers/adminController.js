@@ -93,13 +93,10 @@ exports.getReportedProducts = async (req, res) => {
         const result = await db.query(sql);
 
         const products = result.rows.map(p => {
-            let images = p.images;
-            if (typeof images === 'string') {
-                try { images = JSON.parse(images); } catch (e) { images = []; }
-            }
+            const images = p.image_url ? [p.image_url] : ['/uploads/products/placeholder.webp'];
             return {
                 ...p,
-                images: images || [],
+                images,
                 vendor: { name: p.vendor_name, email: p.vendor_email }
             };
         });
@@ -314,7 +311,7 @@ exports.getAllReports = async (req, res) => {
 exports.getAllDeals = async (req, res) => {
     try {
         const result = await db.query(
-            `SELECT d.*, p.name as product_name, p.images, 
+            `SELECT d.*, p.name as product_name, p.image_url, 
                    b.name as buyer_name, b.email as buyer_email, b.whatsapp_number as buyer_whatsapp,
                    v.name as vendor_name, v.email as vendor_email, v.whatsapp_number as vendor_whatsapp
              FROM deals d
@@ -325,13 +322,10 @@ exports.getAllDeals = async (req, res) => {
         );
 
         const formattedDeals = result.rows.map(d => {
-            let images = d.images;
-            if (typeof images === 'string') {
-                try { images = JSON.parse(images); } catch (e) { images = [images]; }
-            }
+            const images = d.image_url ? [d.image_url] : ['/uploads/products/placeholder.webp'];
             return {
                 ...d,
-                images: images || [],
+                images,
                 buyer: { name: d.buyer_name || 'Walk-in', email: d.buyer_email || '', whatsapp: d.buyer_whatsapp || '' },
                 vendor: { name: d.vendor_name, email: d.vendor_email, whatsapp: d.vendor_whatsapp || '' }
             };
