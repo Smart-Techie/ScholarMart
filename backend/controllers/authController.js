@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const { JWT_SECRET } = require('../middleware/auth');
 const { supabase } = require('../config/db');
+const { processUploadedFile } = require('../middleware/upload');
 
 // Helper: Compute badge label from deals_completed & average_rating
 function getBadgeInfo(dealsCompleted, averageRating) {
@@ -381,8 +382,8 @@ exports.uploadPortrait = async (req, res) => {
             return res.status(400).json({ status: 'error', message: 'Portrait file is required' });
         }
 
-        // Relative public path for serving file
-        const fileUrl = `/uploads/portraits/${req.file.filename}`;
+        // Process file into Supabase Storage public CDN link or permanent Data URI
+        const fileUrl = await processUploadedFile(req.file, 'portraits') || `/uploads/portraits/${req.file.filename}`;
 
         await db.query(
             `UPDATE users SET portrait = $1 WHERE id = $2`,

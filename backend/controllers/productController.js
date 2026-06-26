@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const { getBadgeInfo } = require('./authController');
+const { processUploadedFile } = require('../middleware/upload');
 
 // 1. Get All Products (With Filters)
 exports.listProducts = async (req, res) => {
