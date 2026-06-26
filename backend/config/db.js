@@ -1,3 +1,8 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+const dns = require('dns');
+try { dns.setDefaultResultOrder('ipv4first'); } catch(e) {}
+
 const { Pool } = require('pg');
 const { createClient } = require('@supabase/supabase-js');
 
