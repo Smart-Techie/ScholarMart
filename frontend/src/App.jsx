@@ -73,7 +73,16 @@ export default function App() {
       const hash = window.location.hash || '#/';
       if (hash === '#/' || hash === '') setActiveTab('home');
       else if (hash === '#/marketplace') setActiveTab('marketplace');
-      else if (hash === '#/cart') setActiveTab('cart');
+      else if (hash === '#/cart') {
+        const token = localStorage.getItem('scholarmart_token');
+        if (!token) {
+          Toast.show('Please login to view your cart!', 'warning');
+          setActiveTab('auth');
+          window.location.hash = '#/login';
+        } else {
+          setActiveTab('cart');
+        }
+      }
       else if (hash === '#/terms') setActiveTab('terms');
       else if (hash === '#/privacy') setActiveTab('privacy');
       else if (hash === '#/dashboard' || hash === '#/profile') {
@@ -151,6 +160,7 @@ export default function App() {
         <main className="app-content">
           {activeTab === 'home' ? (
             <LandingView 
+              user={user}
               featuredProducts={featuredProducts}
               onSelectProduct={setSelectedProduct}
               savedIds={savedProducts.map(p => p.id)}

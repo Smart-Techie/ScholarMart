@@ -1,7 +1,9 @@
 import React from 'react';
 import ProductCard from '../components/ProductCard';
 
-export default function LandingView({ featuredProducts, onSelectProduct, savedIds, onToggleSave, onSelectCategoryFilter, onOpenTestimonialModal, onOpenSupportModal }) {
+export default function LandingView({ user, featuredProducts, onSelectProduct, savedIds, onToggleSave, onSelectCategoryFilter, onOpenTestimonialModal, onOpenSupportModal }) {
+  const isLoggedIn = Boolean(user || localStorage.getItem('scholarmart_token'));
+
   return (
     <section id="landing-view" className="view-container active">
       {/* Hero Card */}
@@ -20,9 +22,9 @@ export default function LandingView({ featuredProducts, onSelectProduct, savedId
             <button 
               className="btn" 
               style={{ flex: 1, minWidth: '140px', background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', color: 'white', border: '1.5px solid rgba(255,255,255,0.55)', fontWeight: 700 }} 
-              onClick={() => { window.location.hash = '#/register'; }}
+              onClick={() => { window.location.hash = isLoggedIn ? '#/cart' : '#/register'; }}
             >
-              Join Free →
+              {isLoggedIn ? 'My Cart 🛒' : 'Join Free →'}
             </button>
           </div>
         </div>
@@ -211,9 +213,9 @@ export default function LandingView({ featuredProducts, onSelectProduct, savedId
           <button 
             className="btn" 
             style={{ backgroundColor: 'white', color: 'var(--primary-orange)', width: 'auto', padding: '11px 26px', fontSize: '14px', fontWeight: 800, borderRadius: 'var(--radius-md)', boxShadow: '0 4px 12px rgba(0,0,0,0.12)' }} 
-            onClick={() => { window.location.hash = '#/register'; }}
+            onClick={() => { window.location.hash = isLoggedIn ? '#/cart' : '#/register'; }}
           >
-            Create Free Account →
+            {isLoggedIn ? 'View Cart 🛒' : 'Create Free Account →'}
           </button>
         </div>
       </div>
