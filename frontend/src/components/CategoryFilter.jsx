@@ -2,27 +2,33 @@ import React from 'react';
 
 const CATEGORIES = [
   'All',
-  'Textbooks',
   'Electronics',
-  'Furniture',
-  'Fashion',
-  'Appliances',
-  'Stationery',
-  'Other'
+  'Fashion & Clothing',
+  'Books & Academic Materials',
+  'Hostel Essentials',
+  'Gadgets',
+  'Creative & Handmade',
+  'Beauty & Personal Care',
+  'Sports & Fitness',
+  'Others'
 ];
 
 export default function CategoryFilter({ selectedCategory, onSelectCategory }) {
   return (
-    <div className="categories-wrapper" style={{ padding: '8px 16px', marginBottom: '12px' }}>
-      {CATEGORIES.map((cat) => (
-        <button
-          key={cat}
-          className={`category-chip ${selectedCategory === (cat === 'All' ? '' : cat) ? 'active' : ''}`}
-          onClick={() => onSelectCategory(cat === 'All' ? '' : cat)}
-        >
-          {cat}
-        </button>
-      ))}
+    <div className="categories-wrapper" id="marketplace-categories">
+      {CATEGORIES.map((cat) => {
+        const val = cat === 'All' ? '' : cat;
+        const isActive = (selectedCategory || '') === val;
+        return (
+          <button
+            key={cat}
+            className={`category-chip ${isActive ? 'active' : ''}`}
+            onClick={() => onSelectCategory(val)}
+          >
+            {cat}
+          </button>
+        );
+      })}
     </div>
   );
 }
