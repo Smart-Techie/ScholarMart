@@ -5,7 +5,7 @@ export function SupportModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div id="support-modal-overlay" className="modal-overlay" onClick={onClose} style={{ display: 'flex' }}>
+    <div id="support-modal-overlay" className="modal-overlay active" onClick={onClose} style={{ display: 'flex' }}>
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3 style={{ fontSize: '18px', fontWeight: 800 }}>Campus Support</h3>
@@ -45,7 +45,7 @@ export function FilterDrawer({ isOpen, onClose, filters, setFilters, onApply, on
   if (!isOpen) return null;
 
   return (
-    <div id="filter-drawer-overlay" className="modal-overlay" onClick={onClose} style={{ display: 'flex' }}>
+    <div id="filter-drawer-overlay" className="modal-overlay active" onClick={onClose} style={{ display: 'flex' }}>
       <div className="filter-drawer" onClick={(e) => e.stopPropagation()}>
         <div className="filter-drawer-header">
           <h3 className="filter-drawer-title">Filters</h3>
@@ -157,7 +157,7 @@ export function CreateListingModal({ isOpen, onClose, onSuccess }) {
   };
 
   return (
-    <div id="product-modal-overlay" className="modal-overlay" onClick={onClose} style={{ display: 'flex' }}>
+    <div id="product-modal-overlay" className="modal-overlay active" onClick={onClose} style={{ display: 'flex' }}>
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3 id="product-modal-title" style={{ fontSize: '18px', fontWeight: 800 }}>Create Listing</h3>
@@ -232,7 +232,7 @@ export function TestimonialModal({ isOpen, onClose, onSuccess }) {
   if (!isOpen) return null;
 
   return (
-    <div id="testimonial-modal-overlay" className="modal-overlay" onClick={onClose} style={{ display: 'flex' }}>
+    <div id="testimonial-modal-overlay" className="modal-overlay active" onClick={onClose} style={{ display: 'flex' }}>
       <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxHeight: '92vh', overflowY: 'auto' }}>
         <div className="modal-header">
           <div>
