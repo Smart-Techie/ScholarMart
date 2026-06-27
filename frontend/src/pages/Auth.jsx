@@ -114,11 +114,14 @@ export default function Auth({ onLoginSuccess }) {
     setLoading(true);
     try {
       const res = await api.post('/auth/register', {
+        name: regName,
         full_name: regName,
         email: regEmail,
         password: regPassword,
+        confirmPassword: regConfirm,
         phone: regPhone,
         role: regRole,
+        whatsappNumber: regRole === 'vendor' ? regWhatsapp : regPhone,
         whatsapp_number: regRole === 'vendor' ? regWhatsapp : regPhone,
         university: regUniv,
         campus: regCampus || 'Igbariam'

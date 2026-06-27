@@ -20,13 +20,17 @@ function getBadgeInfo(dealsCompleted, averageRating) {
 // 1. Register User
 exports.register = async (req, res) => {
     try {
-        const {
-            name, email, university, campus, password, confirmPassword,
-            role, whatsappNumber
-        } = req.body;
+        const name = req.body.name || req.body.full_name;
+        const email = req.body.email;
+        const university = req.body.university || 'COOU';
+        const campus = req.body.campus || 'Igbariam';
+        const password = req.body.password;
+        const confirmPassword = req.body.confirmPassword || req.body.confirm_password || req.body.password;
+        const role = req.body.role || 'buyer';
+        const whatsappNumber = req.body.whatsappNumber || req.body.whatsapp_number || req.body.phone;
 
         // Validations
-        if (!name || !email || !campus || !password || !confirmPassword) {
+        if (!name || !email || !campus || !password) {
             return res.status(400).json({ status: 'error', message: 'All registration fields are required' });
         }
 
