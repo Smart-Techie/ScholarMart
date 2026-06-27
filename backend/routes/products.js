@@ -14,6 +14,7 @@ router.post('/cart', authenticate, productController.saveProduct);
 router.delete('/cart/:productId', authenticate, productController.unsaveProduct);
 
 // Vendor/Admin routes
+router.get('/vendor/me', authenticate, isVendor, productController.getVendorProducts);
 router.post('/', authenticate, isVendor, uploadProductImages, productController.createProduct);
 router.put('/:id', authenticate, isVendor, uploadProductImages, productController.updateProduct);
 router.delete('/:id', authenticate, isVendor, productController.deleteProduct);

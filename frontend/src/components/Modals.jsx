@@ -142,6 +142,16 @@ export function CreateListingModal({ isOpen, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  React.useEffect(() => {
+    if (isOpen) {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem('scholarmart_user') || '{}');
+        if (storedUser.campus) setCampus(storedUser.campus);
+        if (storedUser.whatsapp_number || storedUser.phone) setWhatsapp(storedUser.whatsapp_number || storedUser.phone);
+      } catch (e) {}
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {

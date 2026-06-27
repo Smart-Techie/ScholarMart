@@ -50,7 +50,7 @@ const uploadProductImages = multer({
     storage: productStorage,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit per image
     fileFilter: fileFilter
-}).array('images', 5); // Allow up to 5 images
+}).any(); // Allow any image field names (image, images, file)
 
 // Storage for profile portraits
 const portraitStorage = multer.diskStorage({

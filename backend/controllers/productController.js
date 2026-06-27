@@ -165,11 +165,42 @@ exports.getProductDetails = async (req, res) => {
     }
 };
 
+// 2.5 Get Vendor's Own Products
+exports.getVendorProducts = async (req, res) => {
+    try {
+        const vendorId = req.user.id;
+        const sql = `
+            SELECT p.*, u.name as vendor_name, u.whatsapp_number
+            FROM products p
+            JOIN users u ON p.vendor_id = u.id
+            WHERE p.vendor_id = $1
+            ORDER BY p.created_at DESC
+        `;
+        const result = await db.query(sql, [vendorId]);
+        return res.status(200).json({
+            status: 'success',
+            data: result.rows
+        });
+    } catch (error) {
+        console.error('Get vendor products error:', error);
+        return res.status(500).json({ status: 'error', message: 'Server error fetching vendor inventory' });
+    }
+};
+
 // 3. Create Product Listing
 exports.createProduct = async (req, res) => {
     try {
-        const { name, description, price, category, university, campus } = req.body;
+        const name = req.body.name;
+        const description = req.body.description;
+        const price = req.body.price;
+        const category = req.body.category;
+        const campus = req.body.campus || req.body.location || 'Igbariam';
+        const university = req.body.university || 'COOU';
         const vendorId = req.user.id;
+
+        if (req.body.vendor_whatsapp) {
+            try { await db.query('UPDATE users SET whatsapp_number = $1 WHERE id = $2', [req.body.vendor_whatsapp, vendorId]); } catch(e) {}
+        }
 
         // Validations
         if (!name || !price || !category || !campus) {
