@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { PlusCircle, Trash2, ShieldAlert, LogOut, Package } from 'lucide-react';
 import api from '../services/api';
+import Toast from '../services/toast';
 
 export default function VendorDashboard({ user, onLogout, onOpenSellModal, onSelectProduct }) {
   const [myProducts, setMyProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [otpInput, setOtpInput] = useState('');
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -28,6 +31,37 @@ export default function VendorDashboard({ user, onLogout, onOpenSellModal, onSel
     }
   };
 
+  const handleResendOtp = async () => {
+    Toast.show('Sending verification code...', 'info');
+    try {
+      const res = await api.post('/auth/send-otp');
+      Toast.show(res.data?.message || 'Verification code resent to your email.', 'success');
+    } catch (err) {
+      Toast.show(err.response?.data?.message || 'Failed to resend OTP.', 'error');
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otpInput || otpInput.trim().length === 0) {
+      Toast.show('Please enter a valid 6-digit pin.', 'warning');
+      return;
+    }
+    setVerifyingOtp(true);
+    try {
+      const res = await api.post('/auth/verify-otp', { otp: otpInput.trim(), email: user.email });
+      if (res.data?.status === 'success' || res.data?.email_verified) {
+        Toast.show('Email verified successfully! ✅', 'success');
+        const updatedUser = { ...user, email_verified: true };
+        localStorage.setItem('scholarmart_user', JSON.stringify(updatedUser));
+        window.location.reload();
+      }
+    } catch (err) {
+      Toast.show(err.response?.data?.message || 'Invalid or expired OTP.', 'error');
+    } finally {
+      setVerifyingOtp(false);
+    }
+  };
+
   const handleDelete = async (e, productId) => {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this listing?')) return;
@@ -44,6 +78,46 @@ export default function VendorDashboard({ user, onLogout, onOpenSellModal, onSel
 
   return (
     <div className="view-container active" style={{ padding: '16px' }}>
+      {/* Email Verification Card */}
+      {user.email_verified === false && (
+        <div id="verification-wizard-card" className="card" style={{ padding: '16px', marginBottom: '20px', borderLeft: '4px solid var(--primary-orange)', backgroundColor: 'var(--surface)' }}>
+          <h3 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-primary)' }}>
+            <ShieldAlert size={18} color="var(--primary-orange)" /> Verify Your Email
+          </h3>
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '14px', lineHeight: '1.4' }}>
+            A 6-digit verification code was sent to <strong>{user.email}</strong> upon registration. Please verify your email address to enable deal confirmation and badge tracking.
+          </p>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+            <input 
+              type="text" 
+              id="otp-code-input"
+              placeholder="6-digit OTP" 
+              maxLength="6"
+              value={otpInput}
+              onChange={(e) => setOtpInput(e.target.value)}
+              className="form-input"
+              style={{ width: '130px', padding: '8px 12px', fontSize: '13px', marginBottom: 0 }}
+            />
+            <button 
+              className="btn btn-primary" 
+              onClick={handleVerifyOtp}
+              disabled={verifyingOtp || !otpInput}
+              style={{ width: 'auto', padding: '8px 16px', fontSize: '13px', borderRadius: '10px' }}
+            >
+              {verifyingOtp ? 'Verifying...' : 'Verify'}
+            </button>
+            <button 
+              className="btn btn-outline" 
+              id="send-otp-btn"
+              onClick={handleResendOtp}
+              style={{ width: 'auto', padding: '8px 16px', fontSize: '13px', borderRadius: '10px' }}
+            >
+              Resend OTP
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Profile Header */}
       <div className="card" style={{ padding: '20px', borderRadius: '20px', background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)', color: 'white' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>

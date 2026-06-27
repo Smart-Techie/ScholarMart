@@ -6,6 +6,7 @@ import Auth from './pages/Auth';
 import VendorDashboard from './pages/VendorDashboard';
 import ProductModal from './components/ProductModal';
 import ProductCard from './components/ProductCard';
+import LegalView from './pages/LegalView';
 import { SupportModal, FilterDrawer, CreateListingModal, TestimonialModal } from './components/Modals';
 import api from './services/api';
 import Toast from './services/toast';
@@ -73,6 +74,8 @@ export default function App() {
       if (hash === '#/' || hash === '') setActiveTab('home');
       else if (hash === '#/marketplace') setActiveTab('marketplace');
       else if (hash === '#/cart') setActiveTab('cart');
+      else if (hash === '#/terms') setActiveTab('terms');
+      else if (hash === '#/privacy') setActiveTab('privacy');
       else if (hash === '#/dashboard' || hash === '#/profile') {
         const token = localStorage.getItem('scholarmart_token');
         setActiveTab(token ? 'profile' : 'auth');
@@ -176,6 +179,10 @@ export default function App() {
               onOpenSellModal={handleOpenSellModal}
               onSelectProduct={setSelectedProduct}
             />
+          ) : activeTab === 'terms' ? (
+            <LegalView page="terms" />
+          ) : activeTab === 'privacy' ? (
+            <LegalView page="privacy" />
           ) : activeTab === 'cart' ? (
             <section className="view-container active">
               <h1 className="view-title">My Cart ({savedProducts.length})</h1>

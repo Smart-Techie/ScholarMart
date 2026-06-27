@@ -124,10 +124,11 @@ export default function Auth({ onLoginSuccess }) {
         campus: regCampus || 'Igbariam'
       });
       if (res.data.token) {
+        const newUser = res.data.user || { name: regName, email: regEmail, role: regRole, email_verified: false };
         localStorage.setItem('scholarmart_token', res.data.token);
-        localStorage.setItem('scholarmart_user', JSON.stringify(res.data.user || { name: regName, email: regEmail, role: regRole }));
-        Toast.show('Account created successfully!', 'success');
-        onLoginSuccess(res.data.user || { name: regName, email: regEmail, role: regRole });
+        localStorage.setItem('scholarmart_user', JSON.stringify(newUser));
+        Toast.show(res.data.message || 'Verification pin sent to your email!', 'success');
+        onLoginSuccess(newUser);
       }
     } catch (err) {
       const msg = err.response?.data?.message || err.response?.data?.error || 'Registration failed. Email might already exist.';
@@ -369,7 +370,7 @@ export default function Auth({ onLoginSuccess }) {
           <div className="terms-agreement-box">
             <label className="terms-agreement-label" htmlFor="reg-terms-agree">
               <input type="checkbox" id="reg-terms-agree" required />
-              <span>I have read and agree to ScholarMart's <a href="#/terms" onClick={(e) => { e.preventDefault(); Toast.show('Terms & Conditions apply.', 'info'); }}>Terms &amp; Conditions</a> and <a href="#/privacy" onClick={(e) => { e.preventDefault(); Toast.show('Privacy Policy applies.', 'info'); }}>Privacy Policy</a>.</span>
+              <span>I have read and agree to ScholarMart's <a href="#/terms">Terms &amp; Conditions</a> and <a href="#/privacy">Privacy Policy</a>.</span>
             </label>
           </div>
 
