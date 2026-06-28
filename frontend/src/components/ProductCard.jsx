@@ -26,8 +26,8 @@ export default function ProductCard({ product, onSelect, isSaved, onToggleSave }
           <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: 'var(--text-secondary)' }}>
             <MapPin size={12} /> {product.location || 'Campus'}
           </span>
-          <span style={{ color: product.condition === 'New' ? 'var(--success)' : 'var(--primary-orange)', fontWeight: 700 }}>
-            {product.condition || 'Used'}
+          <span style={{ color: product.condition === 'Used' ? 'var(--primary-orange)' : 'var(--success)', fontWeight: 700 }}>
+            {product.condition || 'Brand New'}
           </span>
         </div>
       </div>

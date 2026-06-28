@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
+import api from '../services/api';
 
 export default function LandingView({ user, featuredProducts, onSelectProduct, savedIds, onToggleSave, onSelectCategoryFilter, onOpenTestimonialModal, onOpenSupportModal }) {
   const isLoggedIn = Boolean(user || localStorage.getItem('scholarmart_token'));
+  const [testimonials, setTestimonials] = useState([]);
+
+  useEffect(() => {
+    api.get('/testimonials').then(res => {
+      if (res.data?.testimonials) setTestimonials(res.data.testimonials);
+    }).catch(() => {});
+  }, []);
 
   return (
     <section id="landing-view" className="view-container active">
@@ -170,26 +178,45 @@ export default function LandingView({ user, featuredProducts, onSelectProduct, s
         </div>
 
         <div id="testimonials-feed" className="testimonials-scroll">
-          <div className="card" style={{ minWidth: '260px', flexShrink: 0, padding: '14px', borderRadius: '16px', background: 'var(--surface)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--primary-green-light)', color: 'var(--primary-green)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>CO</div>
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 700 }}>Chinedu O.</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>COOU Igbariam • ⭐⭐⭐⭐⭐</div>
+          {testimonials.length > 0 ? (
+            testimonials.map((t, idx) => (
+              <div key={t.id || idx} className="card" style={{ minWidth: '260px', flexShrink: 0, padding: '14px', borderRadius: '16px', background: 'var(--surface)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: idx % 2 === 0 ? 'var(--primary-green-light)' : 'rgba(255,107,0,0.1)', color: idx % 2 === 0 ? 'var(--primary-green)' : 'var(--primary-orange)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>
+                    {(t.user_name || 'Student').slice(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '13px', fontWeight: 700 }}>{t.user_name || 'Student'}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{t.campus ? `COOU ${t.campus}` : 'COOU Campus'} • {'⭐'.repeat(t.rating || 5)}</div>
+                  </div>
+                </div>
+                <p style={{ fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.5 }}>"{t.message}"</p>
               </div>
-            </div>
-            <p style={{ fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.5 }}>"Got my engineering textbooks for half the bookstore price. Safe meetup at the faculty gate!"</p>
-          </div>
-          <div className="card" style={{ minWidth: '260px', flexShrink: 0, padding: '14px', borderRadius: '16px', background: 'var(--surface)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(255,107,0,0.1)', color: 'var(--primary-orange)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>AM</div>
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 700 }}>Amaka M.</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>COOU Uli • ⭐⭐⭐⭐⭐</div>
+            ))
+          ) : (
+            <>
+              <div className="card" style={{ minWidth: '260px', flexShrink: 0, padding: '14px', borderRadius: '16px', background: 'var(--surface)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--primary-green-light)', color: 'var(--primary-green)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>CO</div>
+                  <div>
+                    <div style={{ fontSize: '13px', fontWeight: 700 }}>Chinedu O.</div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>COOU Igbariam • ⭐⭐⭐⭐⭐</div>
+                  </div>
+                </div>
+                <p style={{ fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.5 }}>"Got my engineering textbooks for half the bookstore price. Safe meetup at the faculty gate!"</p>
               </div>
-            </div>
-            <p style={{ fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.5 }}>"Sold my old mattress in 3 hours after posting. WhatsApp link makes connecting so smooth."</p>
-          </div>
+              <div className="card" style={{ minWidth: '260px', flexShrink: 0, padding: '14px', borderRadius: '16px', background: 'var(--surface)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(255,107,0,0.1)', color: 'var(--primary-orange)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>AM</div>
+                  <div>
+                    <div style={{ fontSize: '13px', fontWeight: 700 }}>Amaka M.</div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>COOU Uli • ⭐⭐⭐⭐⭐</div>
+                  </div>
+                </div>
+                <p style={{ fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.5 }}>"Sold my old mattress in 3 hours after posting. WhatsApp link makes connecting so smooth."</p>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Prominent share story CTA */}

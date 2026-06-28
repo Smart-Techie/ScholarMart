@@ -42,8 +42,8 @@ export default function ProductModal({ product, onClose, user }) {
           <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--primary-orange)', textTransform: 'uppercase' }}>
             {product.category || 'General'}
           </span>
-          <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--success)' }}>
-            {product.condition || 'Used'}
+          <span style={{ fontSize: '13px', fontWeight: 700, color: product.condition === 'Used' ? 'var(--primary-orange)' : 'var(--success)' }}>
+            {product.condition || 'Brand New'}
           </span>
         </div>
 

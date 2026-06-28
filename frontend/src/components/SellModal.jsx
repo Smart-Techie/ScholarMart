@@ -10,7 +10,7 @@ export default function SellModal({ onClose, onSuccess }) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('Textbooks');
-  const [condition, setCondition] = useState('Used');
+  const [condition, setCondition] = useState('Brand New');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('Igbariam Campus');
   const [whatsapp, setWhatsapp] = useState('08012345678');
@@ -83,8 +83,8 @@ export default function SellModal({ onClose, onSuccess }) {
             <div className="form-group">
               <label className="form-label">Condition</label>
               <select className="form-select" value={condition} onChange={e => setCondition(e.target.value)}>
+                <option value="Brand New">Brand New</option>
                 <option value="Used">Used</option>
-                <option value="New">Brand New</option>
               </select>
             </div>
           </div>

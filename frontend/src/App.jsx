@@ -256,7 +256,7 @@ export default function App() {
         />
 
         {/* Testimonial Modal */}
-        <TestimonialModal isOpen={showTestimonialModal} onClose={() => setShowTestimonialModal(false)} />
+        <TestimonialModal isOpen={showTestimonialModal} onClose={() => setShowTestimonialModal(false)} onSuccess={() => window.location.reload()} />
 
         {/* Welcome Modal */}
         <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} />

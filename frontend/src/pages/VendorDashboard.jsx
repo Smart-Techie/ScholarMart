@@ -145,7 +145,7 @@ export default function VendorDashboard({ user, onLogout, onOpenSellModal, onSel
             <>
               <div>
                 <div style={{ fontSize: '12px', opacity: 0.7 }}>Reputation Score</div>
-                <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--success)' }}>⭐ {user.reputation_score || 100} / 100</div>
+                <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--success)' }}>⭐ {user.reputation_score || 0} / 100</div>
               </div>
               <div>
                 <div style={{ fontSize: '12px', opacity: 0.7 }}>Active Listings</div>

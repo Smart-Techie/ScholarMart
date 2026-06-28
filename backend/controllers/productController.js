@@ -195,6 +195,7 @@ exports.createProduct = async (req, res) => {
         const description = req.body.description;
         const price = req.body.price;
         const category = req.body.category;
+        const condition = req.body.condition || 'Brand New';
         const campus = req.body.campus || req.body.location || 'Igbariam';
         const university = req.body.university || 'COOU';
         const vendorId = req.user.id;
@@ -223,8 +224,8 @@ exports.createProduct = async (req, res) => {
         }
 
         const sql = `
-            INSERT INTO products (name, description, price, category, university, campus, vendor_id, image_url, status)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *
+            INSERT INTO products (name, description, price, category, condition, university, campus, vendor_id, image_url, status)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *
         `;
 
         const result = await db.query(sql, [
@@ -232,6 +233,7 @@ exports.createProduct = async (req, res) => {
             description || '',
             parseFloat(price),
             category,
+            condition,
             university || 'COOU',
             campus,
             vendorId,

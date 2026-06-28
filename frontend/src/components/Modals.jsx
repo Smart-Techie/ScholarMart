@@ -155,6 +155,7 @@ export function CreateListingModal({ isOpen, onClose, onSuccess }) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('');
+  const [condition, setCondition] = useState('Brand New');
   const [campus, setCampus] = useState('Igbariam');
   const [showCampusDropdown, setShowCampusDropdown] = useState(false);
   const [description, setDescription] = useState('');
@@ -184,6 +185,7 @@ export function CreateListingModal({ isOpen, onClose, onSuccess }) {
       formData.append('name', name);
       formData.append('price', price);
       formData.append('category', category);
+      formData.append('condition', condition);
       formData.append('location', campus);
       formData.append('description', description);
       formData.append('vendor_whatsapp', whatsapp || '08012345678');
@@ -238,6 +240,13 @@ export function CreateListingModal({ isOpen, onClose, onSuccess }) {
               <option value="Others">Others</option>
             </select>
           </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="prod-condition">Condition</label>
+            <select id="prod-condition" className="form-select" value={condition} onChange={e => setCondition(e.target.value)}>
+              <option value="Brand New">Brand New</option>
+              <option value="Used">Used</option>
+            </select>
+          </div>
 
           <div className="form-group autocomplete-container" style={{ position: 'relative' }}>
             <label className="form-label" htmlFor="prod-campus">Campus Location</label>
@@ -290,8 +299,27 @@ export function CreateListingModal({ isOpen, onClose, onSuccess }) {
 export function TestimonialModal({ isOpen, onClose, onSuccess }) {
   const [rating, setRating] = useState(5);
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   if (!isOpen) return null;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await api.post('/testimonials', { rating, message });
+      setMessage('');
+      setRating(5);
+      onSuccess && onSuccess();
+      onClose();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Please log in to submit feedback.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div id="testimonial-modal-overlay" className="modal-overlay active" onClick={onClose} style={{ display: 'flex' }}>
@@ -308,7 +336,9 @@ export function TestimonialModal({ isOpen, onClose, onSuccess }) {
           </button>
         </div>
 
-        <form onSubmit={(e) => { e.preventDefault(); onSuccess && onSuccess({ rating, message }); onClose(); }}>
+        {error && <div style={{ color: '#EF4444', fontSize: '13px', marginBottom: '10px', fontWeight: 600 }}>{error}</div>}
+
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label">Your Rating</label>
             <div id="testimonial-stars" style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
@@ -341,8 +371,8 @@ export function TestimonialModal({ isOpen, onClose, onSuccess }) {
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary" id="testimonial-submit-btn">
-            Submit Feedback ✨
+          <button type="submit" className="btn btn-primary" id="testimonial-submit-btn" disabled={loading}>
+            {loading ? 'Submitting...' : 'Submit Feedback ✨'}
           </button>
         </form>
       </div>
