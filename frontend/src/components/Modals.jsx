@@ -1,6 +1,27 @@
 import React, { useState } from 'react';
 import api from '../services/api';
 
+export function WelcomeModal({ isOpen, onClose }) {
+  if (!isOpen) return null;
+
+  return (
+    <div id="welcome-modal-overlay" className="modal-overlay active" onClick={onClose}>
+      <div className="modal-card welcome-card" onClick={e => e.stopPropagation()} style={{ textAlign: 'center', padding: '36px 26px 32px', borderRadius: '28px', maxWidth: '400px' }}>
+        <div style={{ fontSize: '52px', marginBottom: '14px', lineHeight: '1' }}>🎓</div>
+        <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '10px', letterSpacing: '-0.4px' }}>
+          Welcome to Scholar<span style={{ color: 'var(--primary-orange)' }}>Mart</span>
+        </h2>
+        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.65', marginBottom: '26px' }}>
+          The trust-based campus marketplace. Connect directly with student buyers and sellers on WhatsApp, check community trust badges, and trade safely.
+        </p>
+        <button className="btn btn-primary" onClick={onClose} style={{ width: '100%', padding: '14px', borderRadius: '16px', fontSize: '15px', fontWeight: 700 }}>
+          🚀 Start Exploring
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function SupportModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
@@ -169,6 +190,7 @@ export function CreateListingModal({ isOpen, onClose, onSuccess }) {
       if (file) formData.append('image', file);
 
       await api.post('/products', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      window.dispatchEvent(new Event('productUploaded'));
       onSuccess && onSuccess();
       onClose();
     } catch (err) {

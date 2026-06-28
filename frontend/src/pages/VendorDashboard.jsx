@@ -12,6 +12,9 @@ export default function VendorDashboard({ user, onLogout, onOpenSellModal, onSel
   useEffect(() => {
     if (user) {
       fetchMyProducts();
+      const handleUpload = () => fetchMyProducts();
+      window.addEventListener('productUploaded', handleUpload);
+      return () => window.removeEventListener('productUploaded', handleUpload);
     }
   }, [user]);
 

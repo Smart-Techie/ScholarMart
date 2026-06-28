@@ -9,12 +9,15 @@ export default function Marketplace({ onSelectProduct, savedIds, onToggleSave, s
 
   useEffect(() => {
     fetchProducts();
+    const handleUpload = () => fetchProducts();
+    window.addEventListener('productUploaded', handleUpload);
+    return () => window.removeEventListener('productUploaded', handleUpload);
   }, []);
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/products');
+      const res = await api.get('/products?_cb=' + Date.now());
       if (res.data && res.data.data) {
         setProducts(res.data.data);
       } else if (Array.isArray(res.data)) {

@@ -7,7 +7,7 @@ import VendorDashboard from './pages/VendorDashboard';
 import ProductModal from './components/ProductModal';
 import ProductCard from './components/ProductCard';
 import LegalView from './pages/LegalView';
-import { SupportModal, FilterDrawer, CreateListingModal, TestimonialModal } from './components/Modals';
+import { SupportModal, FilterDrawer, CreateListingModal, TestimonialModal, WelcomeModal } from './components/Modals';
 import api from './services/api';
 import Toast from './services/toast';
 
@@ -23,6 +23,7 @@ export default function App() {
   const [showFilterDrawer, setShowFilterDrawer] = useState(false);
   const [showSellModal, setShowSellModal] = useState(false);
   const [showTestimonialModal, setShowTestimonialModal] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   // Search & Filters state
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,6 +37,10 @@ export default function App() {
     // Fade out splash after 1.8s
     const timer = setTimeout(() => {
       setHideSplash(true);
+      if (!localStorage.getItem('scholarmart_welcomed')) {
+        setShowWelcomeModal(true);
+        localStorage.setItem('scholarmart_welcomed', 'true');
+      }
     }, 1800);
 
     // Load auth
@@ -252,6 +257,9 @@ export default function App() {
 
         {/* Testimonial Modal */}
         <TestimonialModal isOpen={showTestimonialModal} onClose={() => setShowTestimonialModal(false)} />
+
+        {/* Welcome Modal */}
+        <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} />
       </div>
     </>
   );
