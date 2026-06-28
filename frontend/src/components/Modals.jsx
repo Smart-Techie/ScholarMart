@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../services/api';
+import Toast from '../services/toast';
 
 export function WelcomeModal({ isOpen, onClose }) {
   if (!isOpen) return null;
@@ -375,6 +376,97 @@ export function TestimonialModal({ isOpen, onClose, onSuccess }) {
             {loading ? 'Submitting...' : 'Submit Feedback ✨'}
           </button>
         </form>
+      </div>
+    </div>
+  );
+}
+
+export function OtpVerificationModal({ isOpen, user, onSuccess, onLogout }) {
+  const [otpInput, setOtpInput] = useState('');
+  const [verifying, setVerifying] = useState(false);
+  const [resending, setResending] = useState(false);
+
+  if (!isOpen || !user) return null;
+
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    if (!otpInput || otpInput.trim().length === 0) {
+      Toast.show('Please enter a valid 6-digit pin.', 'warning');
+      return;
+    }
+    setVerifying(true);
+    try {
+      const res = await api.post('/auth/verify-otp', { otp: otpInput.trim(), email: user.email });
+      if (res.data?.status === 'success' || res.data?.email_verified) {
+        Toast.show('Email verified successfully! ✅', 'success');
+        const updatedUser = { ...user, email_verified: true };
+        localStorage.setItem('scholarmart_user', JSON.stringify(updatedUser));
+        if (onSuccess) onSuccess(updatedUser);
+      }
+    } catch (err) {
+      Toast.show(err.response?.data?.message || 'Invalid or expired OTP.', 'error');
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setResending(true);
+    Toast.show('Sending verification code...', 'info');
+    try {
+      const res = await api.post('/auth/send-otp');
+      Toast.show(res.data?.message || 'Verification code resent to your email.', 'success');
+    } catch (err) {
+      Toast.show(err.response?.data?.message || 'Failed to resend OTP.', 'error');
+    } finally {
+      setResending(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay active" style={{ display: 'flex', zIndex: 9999, backdropFilter: 'blur(8px)', backgroundColor: 'rgba(0,0,0,0.75)' }}>
+      <div className="modal-card" style={{ maxWidth: '420px', padding: '32px 24px', textAlign: 'center', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}>
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>🛡️</div>
+        <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>Verify Your Email</h3>
+        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
+          We sent a 6-digit verification code to <strong>{user.email}</strong>. Please enter the pin below to activate your ScholarMart account.
+        </p>
+
+        <form onSubmit={handleVerify}>
+          <input 
+            type="text" 
+            placeholder="Enter 6-digit pin" 
+            maxLength="6"
+            value={otpInput}
+            onChange={(e) => setOtpInput(e.target.value)}
+            className="form-input"
+            style={{ textAlign: 'center', fontSize: '20px', letterSpacing: '6px', fontWeight: 800, padding: '12px', borderRadius: '12px', marginBottom: '20px' }}
+            autoFocus
+          />
+
+          <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '14px', fontSize: '15px', fontWeight: 700, borderRadius: '12px', marginBottom: '12px' }} disabled={verifying || !otpInput}>
+            {verifying ? 'Verifying...' : 'Verify & Continue 🚀'}
+          </button>
+        </form>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
+          <button 
+            type="button"
+            onClick={handleResend} 
+            disabled={resending}
+            style={{ background: 'none', border: 'none', color: 'var(--primary-green)', fontSize: '13px', fontWeight: 700, cursor: 'pointer', padding: '4px' }}
+          >
+            {resending ? 'Resending...' : 'Resend Pin 🔄'}
+          </button>
+
+          <button 
+            type="button"
+            onClick={onLogout} 
+            style={{ background: 'none', border: 'none', color: 'var(--danger)', fontSize: '13px', fontWeight: 700, cursor: 'pointer', padding: '4px' }}
+          >
+            Log Out / Switch Account
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import VendorDashboard from './pages/VendorDashboard';
 import ProductModal from './components/ProductModal';
 import ProductCard from './components/ProductCard';
 import LegalView from './pages/LegalView';
-import { SupportModal, FilterDrawer, CreateListingModal, TestimonialModal, WelcomeModal } from './components/Modals';
+import { SupportModal, FilterDrawer, CreateListingModal, TestimonialModal, WelcomeModal, OtpVerificationModal } from './components/Modals';
 import api from './services/api';
 import Toast from './services/toast';
 
@@ -209,15 +209,44 @@ export default function App() {
                 </div>
               ) : (
                 <div className="products-grid">
-                  {savedProducts.map(p => (
-                    <ProductCard 
-                      key={p.id} 
-                      product={p} 
-                      onSelect={setSelectedProduct}
-                      isSaved={true}
-                      onToggleSave={handleToggleSave}
-                    />
-                  ))}
+                  {savedProducts.map(p => {
+                    const whatsappNumber = p.vendor_whatsapp || p.vendor?.whatsapp || '2348000000000';
+                    const message = encodeURIComponent(`Hi, I'm interested in buying "${p.name}" listed on ScholarMart for ₦${Number(p.price).toLocaleString()}. Is it still available?`);
+                    const whatsappLink = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${message}`;
+
+                    return (
+                      <div key={p.id} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <ProductCard 
+                          product={p} 
+                          onSelect={setSelectedProduct}
+                          isSaved={true}
+                          onToggleSave={handleToggleSave}
+                        />
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                          <a 
+                            href={whatsappLink} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="btn"
+                            style={{ flex: 1, backgroundColor: '#25D366', color: '#fff', fontSize: '13px', fontWeight: 700, padding: '10px', borderRadius: '12px', textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                          >
+                            💬 WhatsApp Vendor
+                          </a>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleSave(p);
+                            }}
+                            className="btn"
+                            style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: 'var(--danger)', border: '1px solid rgba(239,68,68,0.3)', padding: '10px 14px', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}
+                            title="Remove from cart"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </section>
@@ -260,6 +289,14 @@ export default function App() {
 
         {/* Welcome Modal */}
         <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} />
+
+        {/* Mandatory OTP Verification Modal */}
+        <OtpVerificationModal 
+          isOpen={Boolean(user && user.email_verified === false)} 
+          user={user} 
+          onSuccess={(updatedUser) => setUser(updatedUser)} 
+          onLogout={handleLogout} 
+        />
       </div>
     </>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bookmark, MapPin } from 'lucide-react';
+import { ShoppingCart, MapPin } from 'lucide-react';
 
 export default function ProductCard({ product, onSelect, isSaved, onToggleSave }) {
   const imageUrl = product.image_url || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=80';
@@ -14,8 +14,9 @@ export default function ProductCard({ product, onSelect, isSaved, onToggleSave }
             e.stopPropagation();
             onToggleSave(product);
           }}
+          title={isSaved ? 'Remove from Cart' : 'Add to Cart'}
         >
-          <Bookmark size={18} fill={isSaved ? 'var(--primary-green)' : 'none'} />
+          <ShoppingCart size={18} fill={isSaved ? 'var(--primary-green)' : 'none'} color={isSaved ? 'var(--primary-green)' : 'currentColor'} />
         </button>
       </div>
       <div className="product-card-body">
