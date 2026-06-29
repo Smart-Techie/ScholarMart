@@ -1,10 +1,9 @@
-const CACHE_NAME = 'scholarmart-pwa-v1';
+const CACHE_NAME = 'scholarmart-pwa-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/favicon.svg',
-  '/logo.png'
+  '/appicon.png'
 ];
 
 // Service Worker installation and resource pre-caching
