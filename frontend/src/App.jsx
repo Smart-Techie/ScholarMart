@@ -190,7 +190,9 @@ export default function App() {
           ) : activeTab === 'auth' ? (
             <Auth onLoginSuccess={(u) => { setUser(u); setActiveTab('profile'); window.location.hash = '#/dashboard'; }} />
           ) : activeTab === 'profile' ? (
-            user?.role === 'admin' ? (
+            !user ? (
+              <Auth onLoginSuccess={(u) => { setUser(u); setActiveTab('profile'); window.location.hash = '#/dashboard'; }} />
+            ) : user.role === 'admin' ? (
               <AdminDashboard user={user} onLogout={handleLogout} />
             ) : (
               <VendorDashboard 

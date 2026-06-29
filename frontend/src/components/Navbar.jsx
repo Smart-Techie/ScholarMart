@@ -40,11 +40,31 @@ export default function Navbar({ activeTab, setActiveTab, searchQuery, setSearch
           {installPrompt && (
             <button 
               className="btn btn-sm" 
-              style={{ width: 'auto', padding: '7px 12px', fontSize: '12px', fontWeight: 800, borderRadius: '20px', backgroundColor: 'var(--primary-green)', color: '#fff', display: 'flex', alignItems: 'center', gap: '4px', border: 'none', boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)', animation: 'pulse 2s infinite' }}
+              style={{ 
+                width: 'auto', 
+                padding: '8px 16px', 
+                fontSize: '12px', 
+                fontWeight: 700, 
+                borderRadius: '24px', 
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+                color: '#fff', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '6px', 
+                border: 'none', 
+                boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)',
+                letterSpacing: '0.01em',
+                whiteSpace: 'nowrap'
+              }}
               onClick={handleInstallClick}
               title="Install ScholarMart to your home screen"
             >
-              📲 Install App
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: '13px', height: '13px', flexShrink: 0 }}>
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Install App
             </button>
           )}
           <button 
