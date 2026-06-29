@@ -19,13 +19,14 @@ export default function AdminDashboard({ user, onLogout }) {
     setLoading(true);
     try {
       const [usersRes, modRes, repRes] = await Promise.all([
-        api.get('/admin/users').catch(() => ({ data: [] })),
-        api.get('/admin/moderation').catch(() => ({ data: [] })),
-        api.get('/admin/all-reports').catch(() => ({ data: [] }))
+        api.get('/admin/users').catch(() => ({ data: {} })),
+        api.get('/admin/moderation').catch(() => ({ data: {} })),
+        api.get('/admin/all-reports').catch(() => ({ data: {} }))
       ]);
-      setUsers(usersRes.data || []);
-      setReportedListings(modRes.data || []);
-      setReports(repRes.data || []);
+      // Unwrap nested response objects — API returns { users: [...] }, { reportedProducts: [...] }, { reports: [...] }
+      setUsers(Array.isArray(usersRes.data) ? usersRes.data : (usersRes.data?.users || []));
+      setReportedListings(Array.isArray(modRes.data) ? modRes.data : (modRes.data?.reportedProducts || []));
+      setReports(Array.isArray(repRes.data) ? repRes.data : (repRes.data?.reports || []));
     } catch (err) {
       console.error('Error fetching admin data:', err);
       Toast.show('Failed to load some admin data', 'error');
@@ -39,7 +40,7 @@ export default function AdminDashboard({ user, onLogout }) {
     try {
       await api.post(`/admin/users/${userId}/status`, { status: newStatus });
       Toast.show(`User account marked as ${newStatus}`, 'success');
-      setUsers(users.map(u => u.id === userId ? { ...u, account_status: newStatus } : u));
+      setUsers(users.map(u => u.id === userId ? { ...u, status: newStatus } : u));
     } catch (err) {
       Toast.show('Failed to update user status', 'error');
     }
@@ -70,7 +71,7 @@ export default function AdminDashboard({ user, onLogout }) {
   const handleModerateListing = async (productId, action) => {
     try {
       await api.post(`/admin/moderation/${productId}`, { action });
-      Toast.show(`Listing ${action} successfully`, 'success');
+      Toast.show(`Listing ${action === 'approve' ? 'approved' : 'removed'} successfully`, 'success');
       setReportedListings(reportedListings.filter(p => p.id !== productId));
     } catch (err) {
       Toast.show('Failed to moderate listing', 'error');
@@ -209,20 +210,20 @@ export default function AdminDashboard({ user, onLogout }) {
                       </td>
                       <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>{u.campus || 'Main Campus'}</td>
                       <td style={{ padding: '12px' }}>
-                        <span style={{ color: u.account_status === 'suspended' ? 'var(--danger)' : 'var(--success)', fontWeight: 700 }}>
-                          {u.account_status === 'suspended' ? '🚫 Suspended' : '✅ Active'}
+                        <span style={{ color: u.status === 'suspended' || u.status === 'banned' ? 'var(--danger)' : 'var(--success)', fontWeight: 700 }}>
+                          {u.status === 'suspended' ? '🚫 Suspended' : u.status === 'banned' ? '🔴 Banned' : '✅ Active'}
                         </span>
                       </td>
                       <td style={{ padding: '12px' }}>
                         {u.role !== 'admin' && (
                           <div style={{ display: 'flex', gap: '6px' }}>
                             <button 
-                              onClick={() => handleToggleStatus(u.id, u.account_status)} 
+                              onClick={() => handleToggleStatus(u.id, u.status)} 
                               className="btn btn-sm"
-                              style={{ padding: '6px 10px', fontSize: '11px', backgroundColor: u.account_status === 'suspended' ? 'var(--primary-green)' : 'var(--primary-orange)', color: '#fff', borderRadius: '8px' }}
+                              style={{ padding: '6px 10px', fontSize: '11px', backgroundColor: u.status === 'suspended' ? 'var(--primary-green)' : 'var(--primary-orange)', color: '#fff', borderRadius: '8px' }}
                               title="Toggle Suspension"
                             >
-                              {u.account_status === 'suspended' ? 'Activate' : 'Suspend'}
+                              {u.status === 'suspended' ? 'Activate' : 'Suspend'}
                             </button>
                             <button 
                               onClick={() => handleResetPassword(u.id)} 
