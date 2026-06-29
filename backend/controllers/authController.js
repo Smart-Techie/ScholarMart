@@ -257,18 +257,22 @@ exports.sendOtp = async (req, res) => {
              return res.status(500).json({ status: 'error', message: 'Supabase is not configured' });
         }
 
-        // Use signInWithOtp instead of resend — it always routes through custom SMTP
-        // and doesn't fall back to Supabase's default noreply@mail.app.supabase.io
-        const { error } = await supabase.auth.signInWithOtp({
-            email: email,
-            options: {
-                shouldCreateUser: false // Don't create a new auth user, just send OTP
-            }
+        // Attempt to resend signup verification OTP first
+        let { error } = await supabase.auth.resend({
+            type: 'signup',
+            email: email
         });
 
         if (error) {
-            console.error('Send OTP error (Supabase):', JSON.stringify(error));
-            return res.status(400).json({ status: 'error', message: error.message });
+            // Fallback to signInWithOtp if resend fails
+            const fallback = await supabase.auth.signInWithOtp({
+                email: email,
+                options: { shouldCreateUser: false }
+            });
+            if (fallback.error) {
+                console.error('Send OTP error (Supabase):', JSON.stringify(fallback.error));
+                return res.status(400).json({ status: 'error', message: fallback.error.message || error.message });
+            }
         }
 
         return res.json({
