@@ -245,13 +245,14 @@ exports.login = async (req, res) => {
 // 3. Send Email OTP (Resend Signup OTP or Login OTP)
 exports.sendOtp = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const userResult = await db.query('SELECT email FROM users WHERE id = $1', [userId]);
-        if (userResult.rowCount === 0) {
-            return res.status(404).json({ status: 'error', message: 'User not found' });
+        let email = req.body?.email;
+        if (!email && req.user?.id) {
+            const userResult = await db.query('SELECT email FROM users WHERE id = $1', [req.user.id]);
+            if (userResult.rowCount > 0) email = userResult.rows[0].email;
         }
-
-        const email = userResult.rows[0].email;
+        if (!email) {
+            return res.status(400).json({ status: 'error', message: 'Email address is required to resend OTP' });
+        }
 
         if (!supabase) {
              return res.status(500).json({ status: 'error', message: 'Supabase is not configured' });
