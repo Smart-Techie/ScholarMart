@@ -1,7 +1,7 @@
 {
   "name": "Scholarmart Campus Marketplace",
   "short_name": "Scholarmart",
-  "description": "A trusted student marketplace built for Nigerian university students",
+  "description": "A trusted student marketplace built for Nigeria university students",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",

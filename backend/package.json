@@ -1,7 +1,7 @@
 {
   "name": "scholarmart-backend",
   "version": "1.0.0",
-  "description": "Scholarmart - Full-stack Marketplace PWA for Nigerian University Students",
+  "description": "Scholarmart - Full-stack Marketplace PWA for Nigeria University Students",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

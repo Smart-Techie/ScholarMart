@@ -1,7 +1,7 @@
 {
   "name": "ScholarMart - Campus Marketplace",
   "short_name": "ScholarMart",
-  "description": "The trusted marketplace built for Nigerian university students. Buy, sell, and arrange campus meetups securely.",
+  "description": "The trusted marketplace built for Nigeria university students. Buy, sell, and arrange campus meetups securely.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
