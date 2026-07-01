@@ -4,6 +4,7 @@ import Toast from '../services/toast';
 
 export default function AdminDashboard({ user, onLogout }) {
   const [activePane, setActivePane] = useState('dashboard');
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [analytics, setAnalytics] = useState({ totalUsers: 0, totalListings: 0, totalDeals: 0, totalReports: 0 });
   const [deals, setDeals] = useState([]);
   const [users, setUsers] = useState([]);
@@ -93,44 +94,66 @@ export default function AdminDashboard({ user, onLogout }) {
 
         {/* ── SIDEBAR ── */}
         <aside style={{
-          width: '200px', flexShrink: 0,
+          width: isCollapsed ? '64px' : '200px', flexShrink: 0,
           backgroundColor: 'var(--surface)',
           borderRight: '1px solid var(--border)',
           display: 'flex', flexDirection: 'column',
-          padding: '16px 0'
+          padding: '16px 0',
+          transition: 'width 0.25s ease',
+          overflowX: 'hidden'
         }}>
-          <div style={{ padding: '0 16px 16px', borderBottom: '1px solid var(--border)', marginBottom: '8px' }}>
-            <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary-green)' }}>🛡️ Admin</div>
-            <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>{user?.email}</div>
+          <div style={{ padding: isCollapsed ? '0 12px 16px' : '0 16px 16px', borderBottom: '1px solid var(--border)', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: isCollapsed ? 'center' : 'space-between' }}>
+            {!isCollapsed && (
+              <div>
+                <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary-green)', whiteSpace: 'nowrap' }}>🛡️ Admin</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px' }}>{user?.email}</div>
+              </div>
+            )}
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+              style={{
+                background: 'var(--background)', border: '1px solid var(--border)', borderRadius: '8px',
+                padding: '6px 8px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-primary)'
+              }}
+            >
+              {isCollapsed ? '⏭️' : '⏮️'}
+            </button>
           </div>
 
           {sideItems.map(item => (
             <button
               key={item.id}
               onClick={() => loadPane(item.id)}
+              title={isCollapsed ? item.label : undefined}
               style={{
-                display: 'flex', alignItems: 'center', gap: '10px',
-                padding: '12px 20px', border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: isCollapsed ? '0' : '10px',
+                justifyContent: isCollapsed ? 'center' : 'flex-start',
+                padding: isCollapsed ? '12px 0' : '12px 20px', border: 'none', cursor: 'pointer',
                 fontSize: '13px', fontWeight: 700, textAlign: 'left', width: '100%',
                 backgroundColor: activePane === item.id ? 'rgba(16,185,129,0.12)' : 'transparent',
                 color: activePane === item.id ? 'var(--primary-green)' : 'var(--text-secondary)',
                 borderLeft: activePane === item.id ? '3px solid var(--primary-green)' : '3px solid transparent',
               }}
             >
-              <span>{item.icon}</span> {item.label}
+              <span style={{ fontSize: '16px' }}>{item.icon}</span>
+              {!isCollapsed && <span style={{ whiteSpace: 'nowrap' }}>{item.label}</span>}
             </button>
           ))}
 
-          <div style={{ marginTop: 'auto', padding: '16px' }}>
+          <div style={{ marginTop: 'auto', padding: isCollapsed ? '16px 8px' : '16px' }}>
             <button
               onClick={onLogout}
+              title={isCollapsed ? "Logout" : undefined}
               style={{
-                width: '100%', padding: '10px', border: '1px solid rgba(239,68,68,0.4)',
+                width: '100%', padding: isCollapsed ? '10px 0' : '10px', border: '1px solid rgba(239,68,68,0.4)',
                 backgroundColor: 'rgba(239,68,68,0.08)', color: '#ef4444',
                 borderRadius: '10px', cursor: 'pointer', fontWeight: 700, fontSize: '13px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
               }}
             >
-              🚪 Logout
+              <span>🚪</span>
+              {!isCollapsed && <span>Logout</span>}
             </button>
           </div>
         </aside>
